@@ -8,10 +8,23 @@ namespace Puzzle.Tests
 {
     public class Puzzle_UnitTests
     {
-        [Fact]
-        public void Puzzle_BoardGeneration()
+        public static int[][] SolvedBoard
         {
-            var puzzle = new Puzzle();
+            get
+            {
+                return new int[][] {
+                    new int[4] {  1,  2,  3,  4 },
+                    new int[4] {  5,  6,  7,  8 },
+                    new int[4] {  9, 10, 11, 12 },
+                    new int[4] { 13, 14, 15,  0 },
+                };
+            }
+        }
+
+        [Fact]
+        public void BoardGeneration()
+        {
+            var puzzle = new Puzzle(4);
             puzzle.GenerateBoard();
 
             var fields = puzzle.Board.SelectMany(field => field).OrderBy(field => field).ToList();
@@ -21,18 +34,22 @@ namespace Puzzle.Tests
         }
 
         [Fact]
-        public void Board_IsSolved_True()
+        public void IsSolved_True()
         {
-            var puzzle = new Puzzle();
-            puzzle.Board = Puzzle.SolvedBoard;
+            var puzzle = new Puzzle(4)
+            {
+                Board = SolvedBoard
+            };
             puzzle.IsSolved().Should().BeTrue();
         }
 
         [Fact]
-        public void Board_IsSolved_False()
+        public void IsSolved_False()
         {
-            var puzzle = new Puzzle();
-            puzzle.Board = Puzzle.SolvedBoard;
+            var puzzle = new Puzzle(4)
+            {
+                Board = SolvedBoard
+            };
 
             var temp = puzzle.Board[0][0];
             puzzle.Board[0][0] = puzzle.Board[0][1];
@@ -42,14 +59,16 @@ namespace Puzzle.Tests
         }
 
         [Fact]
-        public void Filed_CanMove()
+        public void CanMove()
         {
-            var puzzle = new Puzzle();
-            puzzle.Board = new int[][] {
-                new int[4] {  1,  2,  3,  4 },
-                new int[4] {  5,  6,  7,  8 },
-                new int[4] {  9, 10, 11, 12 },
-                new int[4] { 13, 14,  0, 15 },
+            var puzzle = new Puzzle(4)
+            {
+                Board = new int[][] {
+                    new int[4] {  1,  2,  3,  4 },
+                    new int[4] {  5,  6,  7,  8 },
+                    new int[4] {  9, 10, 11, 12 },
+                    new int[4] { 13, 14,  0, 15 }
+                }
             };
 
             puzzle.CanMakeMove(new Move(1, 1, Direction.UP)).Should().BeFalse();
@@ -64,13 +83,15 @@ namespace Puzzle.Tests
         }
 
         [Fact]
-        public void Filed_CanMove_2()
+        public void CanMove_SmallPuzzle()
         {
-            IPuzzle puzzle = new Puzzle();
-            puzzle.Board = new int[][] {
-                new int[3] { 1, 2, 3 },
-                new int[3] { 4, 5, 6 },
-                new int[3] { 7, 0, 8 }
+            IPuzzle puzzle = new Puzzle(3)
+            {
+                Board = new int[][] {
+                    new int[3] { 1, 2, 3 },
+                    new int[3] { 4, 5, 6 },
+                    new int[3] { 7, 0, 8 }
+                }
             };
 
             puzzle.CanMakeMove(new Move(4, 1, Direction.UP)).Should().BeFalse();
@@ -80,14 +101,16 @@ namespace Puzzle.Tests
         }
 
         [Fact]
-        public void Filed_Move()
+        public void MakeMove()
         {
-            var puzzle = new Puzzle();
-            puzzle.Board = new int[][] {
-                new int[4] {  1,  2,  3,  4 },
-                new int[4] {  5,  6,  7,  8 },
-                new int[4] {  9, 10, 11, 12 },
-                new int[4] { 13, 14,  0, 15 }
+            var puzzle = new Puzzle(4)
+            {
+                Board = new int[][] {
+                    new int[4] {  1,  2,  3,  4 },
+                    new int[4] {  5,  6,  7,  8 },
+                    new int[4] {  9, 10, 11, 12 },
+                    new int[4] { 13, 14,  0, 15 }
+                }
             };
 
             var move = new Move(3, 3, Direction.LEFT);
@@ -96,14 +119,16 @@ namespace Puzzle.Tests
         }
 
         [Fact]
-        public void Filed_Move_Twice()
+        public void MakeMove_Twice()
         {
-            var puzzle = new Puzzle();
-            puzzle.Board = new int[][] {
-                new int[4] {  1,  2,  3,  4 },
-                new int[4] {  5,  6,  7,  8 },
-                new int[4] {  9, 10,  0, 12 },
-                new int[4] { 13, 14, 11, 15 }
+            var puzzle = new Puzzle(4)
+            {
+                Board = new int[][] {
+                    new int[4] { 1, 2, 3, 4 },
+                    new int[4] { 5, 6, 7, 8 },
+                    new int[4] { 9, 10, 0, 12 },
+                    new int[4] { 13, 14, 11, 15 }
+                }
             };
 
             puzzle.TryMakeMove(new Move(3, 2, Direction.UP));
@@ -112,14 +137,16 @@ namespace Puzzle.Tests
         }
 
         [Fact]
-        public void Board_PossibleMoves()
+        public void GetPossibleMoves_Center()
         {
-            var puzzle = new Puzzle();
-            puzzle.Board = new int[][] {
-                new int[4] {  1,  2,  3,  4 },
-                new int[4] {  5,  6,  7,  8 },
-                new int[4] {  9, 10,  0, 12 },
-                new int[4] { 13, 14, 11, 15 }
+            var puzzle = new Puzzle(4)
+            {
+                Board = new int[][] {
+                    new int[4] {  1,  2,  3,  4 },
+                    new int[4] {  5,  6,  7,  8 },
+                    new int[4] {  9, 10,  0, 12 },
+                    new int[4] { 13, 14, 11, 15 }
+                }
             };
 
             List<Move> possibleMoves = new()
@@ -134,14 +161,16 @@ namespace Puzzle.Tests
         }
 
         [Fact]
-        public void Board_PossibleMoves_Border()
+        public void GetPossibleMoves_Border()
         {
-            var puzzle = new Puzzle();
-            puzzle.Board = new int[][] {
-                new int[4] {  1,  2,  3,  4 },
-                new int[4] {  5,  6,  7,  8 },
-                new int[4] {  9, 10, 11, 12 },
-                new int[4] { 13, 14,  0, 15 }
+            var puzzle = new Puzzle(4)
+            {
+                Board = new int[][] {
+                    new int[4] {  1,  2,  3,  4 },
+                    new int[4] {  5,  6,  7,  8 },
+                    new int[4] {  9, 10, 11, 12 },
+                    new int[4] { 13, 14,  0, 15 }
+                }
             };
 
             List<Move> possibleMoves = new()

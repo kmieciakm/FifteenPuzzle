@@ -13,7 +13,7 @@ namespace Puzzle.Solver
         {
             HashSet<IPuzzle> visited = new();
             Queue<IPuzzle> toVisit = new();
-            PuzzleComperer comperer = new PuzzleComperer();
+            PuzzleComparer comparer = new PuzzleComparer();
 
             toVisit.Enqueue(puzzle);
             while (toVisit.Count > 0)
@@ -27,7 +27,7 @@ namespace Puzzle.Solver
                 {
                     nextPuzzle = DeepCopier.Copy(puzzle);
                     nextPuzzle.TryMakeMove(move);
-                    if (!visited.Contains(nextPuzzle, comperer))
+                    if (!visited.Contains(nextPuzzle, comparer))
                     {
                         toVisit.Enqueue(nextPuzzle);
                     }
