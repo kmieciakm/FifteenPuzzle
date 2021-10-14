@@ -9,11 +9,17 @@ namespace Puzzle.Solver
 {
     public class BFS : IPuzzleSolver
     {
-        public void Solve(ref IPuzzle puzzle)
+        private PuzzleComparer Comparer { get; set; } = new PuzzleComparer();
+
+        /// <summary>
+        /// The algorithm explores all possible moves of the initial puzzle before continuing with the resulting puzzle.
+        /// </summary>
+        /// <param name="puzzle">Puzzle to solve.</param>
+        /// <returns>True if found solved puzzle otherwise, false.</returns>
+        public bool Solve(ref IPuzzle puzzle)
         {
             HashSet<IPuzzle> visited = new();
             Queue<IPuzzle> toVisit = new();
-            PuzzleComparer comparer = new PuzzleComparer();
 
             toVisit.Enqueue(puzzle);
             while (toVisit.Count > 0)
@@ -27,7 +33,7 @@ namespace Puzzle.Solver
                 {
                     nextPuzzle = DeepCopier.Copy(puzzle);
                     nextPuzzle.TryMakeMove(move);
-                    if (!visited.Contains(nextPuzzle, comparer))
+                    if (!visited.Contains(nextPuzzle, Comparer))
                     {
                         toVisit.Enqueue(nextPuzzle);
                     }
@@ -35,9 +41,11 @@ namespace Puzzle.Solver
 
                 if (puzzle.IsSolved())
                 {
-                    return;
+                    return true;
                 }
             }
+
+            return false;
         }
     }
 }

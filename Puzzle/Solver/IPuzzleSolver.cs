@@ -9,6 +9,11 @@ namespace Puzzle.Solver
 {
     interface IPuzzleSolver
     {
-        void Solve(ref IPuzzle puzzle);
+        /// <summary>
+        /// Tries to solve the puzzle.
+        /// </summary>
+        /// <param name="puzzle">The puzzle to solve.</param>
+        /// <returns>True if successfully solved puzzle, otherwise false.</returns>
+        bool Solve(ref IPuzzle puzzle);
     }
 }

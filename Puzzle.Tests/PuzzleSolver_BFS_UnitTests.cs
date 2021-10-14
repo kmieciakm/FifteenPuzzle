@@ -9,10 +9,10 @@ using Xunit;
 
 namespace Puzzle.Tests
 {
-    public class PuzzleSolver_UnitTests
+    public class PuzzleSolver_BFS_UnitTests
     {
         [Fact]
-        public void BFS_Solved()
+        public void BFS_SolvedPuzzle()
         {
             IPuzzle puzzle = new Puzzle(4)
             {
@@ -25,13 +25,14 @@ namespace Puzzle.Tests
             };
 
             BFS BFSsolver = new();
-            BFSsolver.Solve(ref puzzle);
+            var result = BFSsolver.Solve(ref puzzle);
 
+            result.Should().BeTrue();
             puzzle.IsSolved().Should().BeTrue();
         }
 
         [Fact]
-        public void BFS_Simple()
+        public void BFS_SimplePuzzle()
         {
             IPuzzle puzzle = new Puzzle(4)
             {
@@ -44,13 +45,14 @@ namespace Puzzle.Tests
             };
 
             BFS BFSsolver = new();
-            BFSsolver.Solve(ref puzzle);
+            var result = BFSsolver.Solve(ref puzzle);
 
+            result.Should().BeTrue();
             puzzle.IsSolved().Should().BeTrue();
         }
 
         [Fact]
-        public void BFS_Complicated()
+        public void BFS_ComplexPuzzle()
         {
             IPuzzle puzzle = new Puzzle(3)
             {
@@ -62,9 +64,28 @@ namespace Puzzle.Tests
             };
 
             BFS BFSsolver = new();
-            BFSsolver.Solve(ref puzzle);
+            var result = BFSsolver.Solve(ref puzzle);
 
+            result.Should().BeTrue();
             puzzle.IsSolved().Should().BeTrue();
+        }
+
+        [Fact]
+        public void BFS_ImpossiblePuzzle()
+        {
+            IPuzzle puzzle = new Puzzle(2)
+            {
+                Board = new int[][] {
+                    new int[2] {  1,  0 },
+                    new int[2] {  2,  3 }
+                }
+            };
+
+            BFS BFSsolver = new();
+            var result = BFSsolver.Solve(ref puzzle);
+
+            result.Should().BeFalse();
+            puzzle.IsSolved().Should().BeFalse();
         }
     }
 }
