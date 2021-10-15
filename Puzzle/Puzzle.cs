@@ -14,7 +14,8 @@ namespace Puzzle
         bool IsSolved();
         bool CanMakeMove(Move move);
         void TryMakeMove(Move move);
-        public List<Move> GetPossibleMoves();
+        IEnumerable<Move> GetPossibleMoves();
+        IPuzzle GetCopy();
     }
 
     public class Puzzle : IPuzzle
@@ -37,11 +38,10 @@ namespace Puzzle
         public void GenerateBoard()
         {
             Random random = new();
+            var numberIndex = 0;
             var numbers = Enumerable.Range(0, BoardSize * BoardSize)
                 .OrderBy(x => random.Next())
-                .Select(x => (int)x)
                 .ToArray();
-            var numberIndex = 0;
 
             for (int rowIndex = 0; rowIndex < BoardSize; rowIndex++)
             {
@@ -55,9 +55,20 @@ namespace Puzzle
 
         public bool IsSolved()
         {
-            var boardFields = Board.SelectMany(f => f).ToList();
-            var solvedFields = Enumerable.Range(1, (Board.Length * Board.Length) - 1).Append(0);
-            return boardFields.SequenceEqual(solvedFields);
+            var number = 1;
+            for (int rowIndex = 0; rowIndex < BoardSize; rowIndex++)
+            {
+                for (int columnIndex = 0; columnIndex < BoardSize; columnIndex++)
+                {
+                    if (Board[rowIndex][columnIndex] != number)
+                    {
+                        return false;
+                    }
+                    number++;
+                    if (number == BoardSize * BoardSize) number = 0; 
+                }
+            }
+            return true;
         }
 
         public bool CanMakeMove(Move move)
@@ -79,7 +90,7 @@ namespace Puzzle
                     x >= 0 &&
                     x < Board.Length &&
                     y >= 0 &&
-                    y < Board[move.X].Length;
+                    y < Board[x].Length;
             }
             bool IsEmptyField(int x, int y)
             {
@@ -101,7 +112,7 @@ namespace Puzzle
             }
         }
 
-        public List<Move> GetPossibleMoves()
+        public IEnumerable<Move> GetPossibleMoves()
         {
             var emptyField = GetEmptyField();
             var moves = new List<Move>()
@@ -111,12 +122,12 @@ namespace Puzzle
                 new Move(emptyField.x, emptyField.y - 1, Direction.RIGHT),
                 new Move(emptyField.x, emptyField.y + 1, Direction.LEFT)
             };
-            return moves.Where(move => CanMakeMove(move)).ToList();
+            return moves.Where(move => CanMakeMove(move));
         }
 
         private (int x, int y) GetEmptyField()
         {
-            (int, int) filed = new();
+            (int, int) field = new();
             for (int rowIndex = 0; rowIndex < Board.Length; rowIndex++)
             {
                 bool @break = false;
@@ -124,14 +135,14 @@ namespace Puzzle
                 {
                     if (Board[rowIndex][columnIndex] == Empty)
                     {
-                        filed = (rowIndex, columnIndex);
+                        field = (rowIndex, columnIndex);
                         @break = true;
                         break;
                     }
                 }
                 if (@break) break;
             }
-            return filed;
+            return field;
         }
 
         private void Swap(int x1, int y1, int x2, int y2)
@@ -140,20 +151,56 @@ namespace Puzzle
             Board[x1][y1] = Board[x2][y2];
             Board[x2][y2] = temp;
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is Puzzle puzzle)
+            {
+                for (int rowIndex = 0; rowIndex < BoardSize; rowIndex++)
+                {
+                    for (int columnIndex = 0; columnIndex < BoardSize; columnIndex++)
+                    {
+                        if (puzzle.Board[rowIndex][columnIndex] != Board[rowIndex][columnIndex])
+                        {
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            }
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Board);
+        }
+
+        public IPuzzle GetCopy()
+        {
+            var board = new int[BoardSize][];
+            for (int rowIndex = 0; rowIndex < BoardSize; rowIndex++)
+            {
+                board[rowIndex] = new int[BoardSize];
+                for (int columnIndex = 0; columnIndex < BoardSize; columnIndex++)
+                {
+                    board[rowIndex][columnIndex] = Board[rowIndex][columnIndex];
+                }
+            }
+            return new Puzzle(BoardSize) { Board = board };
+        }
     }
 
     public class PuzzleComparer : IEqualityComparer<IPuzzle>
     {
         public bool Equals(IPuzzle puzzle1, IPuzzle puzzle2)
         {
-            var puzzle1Fields = puzzle1.Board.SelectMany(f => f).ToList();
-            var puzzle2Fields = puzzle2.Board.SelectMany(f => f).ToList();
-            return puzzle1Fields.SequenceEqual(puzzle2Fields);
+            return puzzle1.Equals(puzzle2);
         }
 
-        public int GetHashCode([DisallowNull] IPuzzle obj)
+        public int GetHashCode([DisallowNull] IPuzzle puzzle)
         {
-            return obj.GetHashCode();
+            return puzzle.GetHashCode();
         }
     }
 }

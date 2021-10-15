@@ -1,5 +1,4 @@
-﻿using DeepCopy;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -26,12 +25,13 @@ namespace Puzzle.Solver
             {
                 puzzle = toVisit.Dequeue();
                 visited.Add(puzzle);
+                Console.WriteLine($"Visited {visited.Count} nodes");
 
                 var possibleMoves = puzzle.GetPossibleMoves();
                 IPuzzle nextPuzzle;
                 foreach (var move in possibleMoves)
                 {
-                    nextPuzzle = DeepCopier.Copy(puzzle);
+                    nextPuzzle = puzzle.GetCopy();
                     nextPuzzle.TryMakeMove(move);
                     if (!visited.Contains(nextPuzzle, Comparer))
                     {

@@ -1,5 +1,4 @@
-﻿using DeepCopy;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,7 +8,7 @@ namespace Puzzle.Solver
 {
     public class DFS : IPuzzleSolver
     {
-        private HashSet<IPuzzle> Visited { get; set; } = new HashSet<IPuzzle>();
+        private Stack<IPuzzle> Visited { get; set; } = new Stack<IPuzzle>();
         private PuzzleComparer Comparer { get; set; } = new PuzzleComparer();
 
         /// <summary>
@@ -19,7 +18,8 @@ namespace Puzzle.Solver
         /// <returns>True if found solved puzzle otherwise, false.</returns>
         public bool Solve(ref IPuzzle puzzle)
         {
-            Visited.Add(puzzle);
+            Visited.Push(puzzle);
+            Console.WriteLine($"Visited {Visited.Count} nodes");
 
             if (puzzle.IsSolved())
                 return true;
@@ -28,7 +28,7 @@ namespace Puzzle.Solver
             IPuzzle nextPuzzle;
             foreach (var move in possibleMoves)
             {
-                nextPuzzle = DeepCopier.Copy(puzzle);
+                nextPuzzle = puzzle.GetCopy();
                 nextPuzzle.TryMakeMove(move);
                 if (!Visited.Contains(nextPuzzle, Comparer))
                 {

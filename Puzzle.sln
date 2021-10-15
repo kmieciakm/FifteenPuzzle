@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31424.327
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Puzzle", "Puzzle\Puzzle.csproj", "{5B38C966-14CA-4821-8832-00A7E1E3E4AF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Puzzle", "Puzzle\Puzzle.csproj", "{5B38C966-14CA-4821-8832-00A7E1E3E4AF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Puzzle.Tests", "Puzzle.Tests\Puzzle.Tests.csproj", "{477447C2-1F2E-48BA-B4D1-E01D48E4025F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Puzzle.Tests", "Puzzle.Tests\Puzzle.Tests.csproj", "{477447C2-1F2E-48BA-B4D1-E01D48E4025F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Run", "Run\Run.csproj", "{64D91EDA-288D-4B73-ACF7-C0158720B531}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{477447C2-1F2E-48BA-B4D1-E01D48E4025F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{477447C2-1F2E-48BA-B4D1-E01D48E4025F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{477447C2-1F2E-48BA-B4D1-E01D48E4025F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{64D91EDA-288D-4B73-ACF7-C0158720B531}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{64D91EDA-288D-4B73-ACF7-C0158720B531}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{64D91EDA-288D-4B73-ACF7-C0158720B531}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{64D91EDA-288D-4B73-ACF7-C0158720B531}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
