@@ -14,15 +14,7 @@ namespace Puzzle.Tests
         [Fact]
         public void BFS_SolvedPuzzle()
         {
-            IPuzzle puzzle = new Puzzle(4)
-            {
-                Board = new int[][] {
-                    new int[4] {  1,  2,  3,  4 },
-                    new int[4] {  5,  6,  7,  8 },
-                    new int[4] {  9, 10, 11, 12 },
-                    new int[4] { 13, 14, 15,  0 }
-                }
-            };
+            var puzzle = Puzzle.GetSolvedPuzzle(4);
 
             BFS BFSsolver = new();
             var result = BFSsolver.Solve(ref puzzle);

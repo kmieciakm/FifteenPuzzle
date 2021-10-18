@@ -4,16 +4,17 @@ using System;
 using System.Threading;
 using Puzzle;
 using System.Diagnostics;
+using Puzzle.Heuristics;
 
 namespace Run
 {
     class Program
     {
-        private static int MB = 1048576;
+        private const int MB = 1048576;
 
         static void Main(string[] args)
         {
-            Thread ExtendedStackThread = new Thread(
+            Thread ExtendedStackThread = new (
                 new ParameterizedThreadStart(SolvePuzzle),
                 10 * MB);
 
@@ -35,8 +36,8 @@ namespace Run
             var timer = new Stopwatch();
             timer.Start();
 
-            BFS solver = new();
-            var result = solver.Solve(ref puzzle);
+            BEFS solver = new();
+            var result = solver.Solve(ref puzzle, new Manhattan());
 
             timer.Stop();
 

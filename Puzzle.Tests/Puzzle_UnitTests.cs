@@ -8,19 +8,6 @@ namespace Puzzle.Tests
 {
     public class Puzzle_UnitTests
     {
-        public static int[][] SolvedBoard
-        {
-            get
-            {
-                return new int[][] {
-                    new int[4] {  1,  2,  3,  4 },
-                    new int[4] {  5,  6,  7,  8 },
-                    new int[4] {  9, 10, 11, 12 },
-                    new int[4] { 13, 14, 15,  0 },
-                };
-            }
-        }
-
         [Fact]
         public void BoardGeneration()
         {
@@ -34,22 +21,22 @@ namespace Puzzle.Tests
         }
 
         [Fact]
+        public void GetSolvedPuzzle()
+        {
+            Puzzle.GetSolvedPuzzle(4).IsSolved().Should().BeTrue();
+        }
+
+        [Fact]
         public void IsSolved_True()
         {
-            var puzzle = new Puzzle(4)
-            {
-                Board = SolvedBoard
-            };
+            var puzzle = Puzzle.GetSolvedPuzzle(4);
             puzzle.IsSolved().Should().BeTrue();
         }
 
         [Fact]
         public void IsSolved_False()
         {
-            var puzzle = new Puzzle(4)
-            {
-                Board = SolvedBoard
-            };
+            var puzzle = Puzzle.GetSolvedPuzzle(4);
 
             var temp = puzzle.Board[0][0];
             puzzle.Board[0][0] = puzzle.Board[0][1];

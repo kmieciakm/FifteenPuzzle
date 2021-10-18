@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace Puzzle
@@ -14,13 +13,14 @@ namespace Puzzle
         bool IsSolved();
         bool CanMakeMove(Move move);
         void TryMakeMove(Move move);
+        (int x, int y) GetField(int value);
         IEnumerable<Move> GetPossibleMoves();
         IPuzzle GetCopy();
     }
 
     public class Puzzle : IPuzzle
     {
-        private static readonly int Empty = 0;
+        public static readonly int EmptyField = 0;
 
         public int[][] Board { get; init; }
         public int BoardSize { get; }
@@ -65,7 +65,7 @@ namespace Puzzle
                         return false;
                     }
                     number++;
-                    if (number == BoardSize * BoardSize) number = 0; 
+                    if (number == BoardSize * BoardSize) number = 0;
                 }
             }
             return true;
@@ -94,7 +94,7 @@ namespace Puzzle
             }
             bool IsEmptyField(int x, int y)
             {
-                return Board[x][y] == Empty;
+                return Board[x][y] == EmptyField;
             }
         }
 
@@ -114,18 +114,18 @@ namespace Puzzle
 
         public IEnumerable<Move> GetPossibleMoves()
         {
-            var emptyField = GetEmptyField();
+            var (x, y) = GetField(EmptyField);
             var moves = new List<Move>()
             {
-                new Move(emptyField.x + 1, emptyField.y, Direction.UP),
-                new Move(emptyField.x - 1, emptyField.y, Direction.DOWN),
-                new Move(emptyField.x, emptyField.y - 1, Direction.RIGHT),
-                new Move(emptyField.x, emptyField.y + 1, Direction.LEFT)
+                new Move(x + 1, y, Direction.UP),
+                new Move(x - 1, y, Direction.DOWN),
+                new Move(x, y - 1, Direction.RIGHT),
+                new Move(x, y + 1, Direction.LEFT)
             };
             return moves.Where(move => CanMakeMove(move));
         }
 
-        private (int x, int y) GetEmptyField()
+        public (int x, int y) GetField(int value)
         {
             (int, int) field = new();
             for (int rowIndex = 0; rowIndex < Board.Length; rowIndex++)
@@ -133,7 +133,7 @@ namespace Puzzle
                 bool @break = false;
                 for (int columnIndex = 0; columnIndex < Board[rowIndex].Length; columnIndex++)
                 {
-                    if (Board[rowIndex][columnIndex] == Empty)
+                    if (Board[rowIndex][columnIndex] == value)
                     {
                         field = (rowIndex, columnIndex);
                         @break = true;
@@ -150,6 +150,23 @@ namespace Puzzle
             var temp = Board[x1][y1];
             Board[x1][y1] = Board[x2][y2];
             Board[x2][y2] = temp;
+        }
+
+        public static IPuzzle GetSolvedPuzzle(int size)
+        {
+            var solvedPuzzle = new Puzzle(size);
+            var number = 1;
+
+            for (int rowIndex = 0; rowIndex < size; rowIndex++)
+            {
+                for (int columnIndex = 0; columnIndex < size; columnIndex++)
+                {
+                    solvedPuzzle.Board[rowIndex][columnIndex] = number;
+                    number++;
+                }
+            }
+            solvedPuzzle.Board[size - 1][size - 1] = 0;
+            return solvedPuzzle;
         }
 
         public override bool Equals(object obj)
@@ -188,19 +205,6 @@ namespace Puzzle
                 }
             }
             return new Puzzle(BoardSize) { Board = board };
-        }
-    }
-
-    public class PuzzleComparer : IEqualityComparer<IPuzzle>
-    {
-        public bool Equals(IPuzzle puzzle1, IPuzzle puzzle2)
-        {
-            return puzzle1.Equals(puzzle2);
-        }
-
-        public int GetHashCode([DisallowNull] IPuzzle puzzle)
-        {
-            return puzzle.GetHashCode();
         }
     }
 }

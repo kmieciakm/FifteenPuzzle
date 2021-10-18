@@ -12,17 +12,9 @@ namespace Puzzle.Tests
     public class PuzzleSolver_DFS_UnitTests
     {
         [Fact]
-        public void BFS_SolvedPuzzle()
+        public void DFS_SolvedPuzzle()
         {
-            IPuzzle puzzle = new Puzzle(4)
-            {
-                Board = new int[][] {
-                    new int[4] {  1,  2,  3,  4 },
-                    new int[4] {  5,  6,  7,  8 },
-                    new int[4] {  9, 10, 11, 12 },
-                    new int[4] { 13, 14, 15,  0 }
-                }
-            };
+            var puzzle = Puzzle.GetSolvedPuzzle(4);
 
             DFS DFSsolver = new();
             var result = DFSsolver.Solve(ref puzzle);

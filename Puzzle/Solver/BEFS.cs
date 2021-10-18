@@ -1,4 +1,6 @@
-﻿using Puzzle.Helpers;
+﻿using Priority_Queue;
+using Puzzle.Helpers;
+using Puzzle.Heuristics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,24 +9,23 @@ using System.Threading.Tasks;
 
 namespace Puzzle.Solver
 {
-    public class BFS : IPuzzleSolver
+    public class BEFS : IInformedPuzzleSolver
     {
         private PuzzleComparer Comparer { get; set; } = new PuzzleComparer();
 
-        /// <summary>
-        /// The algorithm explores all possible moves of the initial puzzle before continuing with the resulting puzzle.
-        /// </summary>
-        /// <param name="puzzle">Puzzle to solve.</param>
-        /// <returns>True if found solved puzzle otherwise, false.</returns>
-        public bool Solve(ref IPuzzle puzzle)
+        public bool Solve(ref IPuzzle puzzle, IHeuristic heuristic)
         {
-            HashSet<IPuzzle> visited = new();
-            Queue<IPuzzle> toVisit = new();
+            var visited = new HashSet<IPuzzle>();
+            var desiredPuzzle = Puzzle.GetSolvedPuzzle(puzzle.BoardSize);
+            int maxQueueSize = Helpers.Math.Factorial(puzzle.BoardSize * puzzle.BoardSize);
+            var toVisitPriority = new FastPriorityQueue<PuzzleNode>(maxQueueSize);
 
-            toVisit.Enqueue(puzzle);
-            while (toVisit.Count > 0)
+            var cost = heuristic.Calculate(puzzle, desiredPuzzle);
+            toVisitPriority.Enqueue(new PuzzleNode(puzzle), cost);
+
+            while (toVisitPriority.Count > 0)
             {
-                puzzle = toVisit.Dequeue();
+                puzzle = toVisitPriority.Dequeue().Puzzle;
                 visited.Add(puzzle);
                 //Console.WriteLine($"Visited {visited.Count} nodes");
 
@@ -36,7 +37,8 @@ namespace Puzzle.Solver
                     nextPuzzle.TryMakeMove(move);
                     if (!visited.Contains(nextPuzzle, Comparer))
                     {
-                        toVisit.Enqueue(nextPuzzle);
+                        cost = heuristic.Calculate(nextPuzzle, desiredPuzzle);
+                        toVisitPriority.Enqueue(new PuzzleNode(nextPuzzle), cost);
                     }
                 }
 

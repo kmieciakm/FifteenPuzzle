@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Puzzle.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,7 +20,7 @@ namespace Puzzle.Solver
         public bool Solve(ref IPuzzle puzzle)
         {
             Visited.Push(puzzle);
-            Console.WriteLine($"Visited {Visited.Count} nodes");
+            //Console.WriteLine($"Visited {Visited.Count} nodes");
 
             if (puzzle.IsSolved())
                 return true;
