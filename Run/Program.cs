@@ -3,6 +3,9 @@ using System.Threading;
 using CommandLine;
 using System.Collections.Generic;
 using System.Linq;
+using Puzzle.Solver;
+using Puzzle.Heuristics;
+using System.Text;
 
 namespace Puzzle.Game
 {
@@ -12,15 +15,32 @@ namespace Puzzle.Game
         {
             var result = Parser.Default.ParseArguments<PuzzleOptions>(args);
             var output = result.MapResult(Solve, _ => "\0");
-
             Console.WriteLine(output);
-            Console.ReadKey();
 
             static string Solve(PuzzleOptions options)
             {
-                var puzzle = ParsePuzzle(options.Board);
-                ShowPuzzle(puzzle);
-                return "-1";
+                IPuzzle puzzle = ParsePuzzle(options.Board);
+                bool isSolved = false;
+                string steps = "";
+
+                if (!string.IsNullOrEmpty(options.BFS))
+                {
+                    var solver = new BFS();
+                    isSolved = solver.Solve(ref puzzle);
+                }
+                else if (!string.IsNullOrEmpty(options.DFS))
+                {
+                    var solver = new DFS();
+                    isSolved = solver.Solve(ref puzzle);
+                }
+                else if (!string.IsNullOrEmpty(options.BEFS))
+                {
+                    var heuristic = new ZeroHeuristic();
+                    var solver = new BEFS();
+                    isSolved = solver.Solve(ref puzzle, heuristic);
+                }
+
+                return BuildOutput(isSolved, steps);
             }
         }
 
@@ -31,7 +51,7 @@ namespace Puzzle.Game
                 .Select(s => s.ToString())
                 .Select(character => int.Parse(character));
 
-            var boardSize = (int) Math.Sqrt(boardCharacters.Count());
+            var boardSize = (int)Math.Sqrt(boardCharacters.Count());
 
             Puzzle puzzle = new(boardSize);
             for (int x = 0; x < boardSize; x++)
@@ -42,6 +62,15 @@ namespace Puzzle.Game
                 }
             }
             return puzzle;
+        }
+
+        private static string BuildOutput(bool isSolved, string steps)
+        {
+            var isSolvedOutput = isSolved ? steps.Length.ToString() : "-1";
+            var outputBuilder = new StringBuilder();
+            outputBuilder.AppendLine(isSolvedOutput);
+            outputBuilder.AppendLine(steps);
+            return outputBuilder.ToString();
         }
 
         private static void ShowPuzzle(IPuzzle puzzle)

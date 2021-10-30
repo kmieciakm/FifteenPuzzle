@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Puzzle.Solver
 {
-    interface IPuzzleSolver
+    public interface IPuzzleSolver
     {
         /// <summary>
         /// Tries to solve the puzzle.
@@ -17,7 +17,7 @@ namespace Puzzle.Solver
         bool Solve(ref IPuzzle puzzle);
     }
 
-    interface IInformedPuzzleSolver
+    public interface IInformedPuzzleSolver
     {
         /// <summary>
         /// Tries to solve the puzzle using heuristics.
