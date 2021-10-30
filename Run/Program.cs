@@ -1,59 +1,47 @@
-﻿using Puzzles = Puzzle;
-using Puzzle.Solver;
-using System;
+﻿using System;
 using System.Threading;
-using Puzzle;
-using System.Diagnostics;
-using Puzzle.Heuristics;
+using CommandLine;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Puzzle.Game
 {
     class Program
     {
-        private const int MB = 1048576;
-
         static void Main(string[] args)
         {
-            Thread ExtendedStackThread = new(
-                new ParameterizedThreadStart(SolvePuzzle),
-                10 * MB);
+            var result = Parser.Default.ParseArguments<PuzzleOptions>(args);
+            var output = result.MapResult(Solve, _ => "\0");
 
-            ExtendedStackThread.Start();
+            Console.WriteLine(output);
+            Console.ReadKey();
+
+            static string Solve(PuzzleOptions options)
+            {
+                var puzzle = ParsePuzzle(options.Board);
+                ShowPuzzle(puzzle);
+                return "-1";
+            }
         }
 
-        private static void SolvePuzzle(object data)
+        private static IPuzzle ParsePuzzle(string board)
         {
-            IPuzzle puzzle = new Puzzle(3)
+            var boardCharacters = board
+                .ToCharArray()
+                .Select(s => s.ToString())
+                .Select(character => int.Parse(character));
+
+            var boardSize = (int) Math.Sqrt(boardCharacters.Count());
+
+            Puzzle puzzle = new(boardSize);
+            for (int x = 0; x < boardSize; x++)
             {
-                Board = new int[][]
+                for (int y = 0; y < boardSize; y++)
                 {
-                    new int[3] { 2, 3, 5 },
-                    new int[3] { 6, 4, 7 },
-                    new int[3] { 1, 8, 0 }
+                    puzzle.Board[x][y] = boardCharacters.ElementAt((boardSize * x) + y);
                 }
-            };
-
-            var timer = new Stopwatch();
-            timer.Start();
-
-            BEFS solver = new();
-            var result = solver.Solve(ref puzzle, new Manhattan());
-
-            timer.Stop();
-
-            Console.WriteLine();
-            if (result is true)
-            {
-                Console.WriteLine("Solved !!!");
             }
-            else
-            {
-                Console.WriteLine("Unsolved !!!");
-            }
-
-            Console.WriteLine($"{timer.Elapsed}");
-
-            ShowPuzzle(puzzle);
+            return puzzle;
         }
 
         private static void ShowPuzzle(IPuzzle puzzle)
