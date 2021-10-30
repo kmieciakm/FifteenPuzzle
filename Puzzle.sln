@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Puzzle", "Puzzle\Puzzle.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Puzzle.Tests", "Puzzle.Tests\Puzzle.Tests.csproj", "{477447C2-1F2E-48BA-B4D1-E01D48E4025F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Run", "Run\Run.csproj", "{64D91EDA-288D-4B73-ACF7-C0158720B531}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Puzzle.Game", "Run\Puzzle.Game.csproj", "{64D91EDA-288D-4B73-ACF7-C0158720B531}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

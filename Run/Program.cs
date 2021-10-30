@@ -6,7 +6,7 @@ using Puzzle;
 using System.Diagnostics;
 using Puzzle.Heuristics;
 
-namespace Run
+namespace Puzzle.Game
 {
     class Program
     {
@@ -14,7 +14,7 @@ namespace Run
 
         static void Main(string[] args)
         {
-            Thread ExtendedStackThread = new (
+            Thread ExtendedStackThread = new(
                 new ParameterizedThreadStart(SolvePuzzle),
                 10 * MB);
 
@@ -23,7 +23,7 @@ namespace Run
 
         private static void SolvePuzzle(object data)
         {
-            IPuzzle puzzle = new Puzzles.Puzzle(3)
+            IPuzzle puzzle = new Puzzle(3)
             {
                 Board = new int[][]
                 {
