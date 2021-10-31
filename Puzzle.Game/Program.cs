@@ -13,35 +13,51 @@ namespace Puzzle.Game
     {
         static void Main(string[] args)
         {
-            var result = Parser.Default.ParseArguments<PuzzleOptions>(args);
-            var output = result.MapResult(Solve, _ => "\0");
-            Console.WriteLine(output);
-
-            static string Solve(PuzzleOptions options)
+            try
             {
-                IPuzzle puzzle = ParsePuzzle(options.Board);
+                var result = Parser.Default.ParseArguments<PuzzleOptions>(args);
+                var output = result.MapResult(Solve, _ => "\0");
+                Console.WriteLine(output);
+            }
+            catch (Exception error)
+            {
+                HandleError(error);
+            }
+
+            static string Solve(PuzzleOptions option)
+            {
+                IPuzzle puzzle = ParsePuzzle(option.Board);
                 bool isSolved = false;
                 string steps = "";
 
-                if (!string.IsNullOrEmpty(options.BFS))
+                if (option.UseBFS())
                 {
                     var solver = new BFS();
                     isSolved = solver.Solve(ref puzzle, out steps);
                 }
-                else if (!string.IsNullOrEmpty(options.DFS))
+                else if (option.UseDFS())
                 {
                     var solver = new DFS();
                     isSolved = solver.Solve(ref puzzle, out steps);
                 }
-                else if (!string.IsNullOrEmpty(options.BEFS))
+                else if (option.UseBEFS())
                 {
-                    var heuristic = new ZeroHeuristic();
                     var solver = new BEFS();
+                    var heuristic = option.GetHeuristic();
                     isSolved = solver.Solve(ref puzzle, heuristic, out steps);
                 }
 
                 return BuildOutput(isSolved, steps);
             }
+        }
+
+        private static void HandleError(Exception error)
+        {
+            Console.WriteLine("ERROR");
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(error.Message);
+            Console.ResetColor();
+            Console.WriteLine("Use --help for more details.");
         }
 
         private static IPuzzle ParsePuzzle(string board)
