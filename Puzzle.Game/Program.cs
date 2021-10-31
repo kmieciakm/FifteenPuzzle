@@ -26,18 +26,18 @@ namespace Puzzle.Game
                 if (!string.IsNullOrEmpty(options.BFS))
                 {
                     var solver = new BFS();
-                    isSolved = solver.Solve(ref puzzle);
+                    isSolved = solver.Solve(ref puzzle, out steps);
                 }
                 else if (!string.IsNullOrEmpty(options.DFS))
                 {
                     var solver = new DFS();
-                    isSolved = solver.Solve(ref puzzle);
+                    isSolved = solver.Solve(ref puzzle, out steps);
                 }
                 else if (!string.IsNullOrEmpty(options.BEFS))
                 {
                     var heuristic = new ZeroHeuristic();
                     var solver = new BEFS();
-                    isSolved = solver.Solve(ref puzzle, heuristic);
+                    isSolved = solver.Solve(ref puzzle, heuristic, out steps);
                 }
 
                 return BuildOutput(isSolved, steps);

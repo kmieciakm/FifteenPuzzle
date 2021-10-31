@@ -19,7 +19,7 @@ namespace Puzzle.Tests
 
             BEFS solver = new();
             ZeroHeuristic heuristic = new();
-            var result = solver.Solve(ref puzzle, heuristic);
+            var result = solver.Solve(ref puzzle, heuristic, out string steps);
 
             result.Should().BeTrue();
             puzzle.IsSolved().Should().BeTrue();
@@ -40,7 +40,7 @@ namespace Puzzle.Tests
 
             BEFS solver = new();
             Euclidean heuristic = new();
-            var result = solver.Solve(ref puzzle, heuristic);
+            var result = solver.Solve(ref puzzle, heuristic, out string steps);
 
             result.Should().BeTrue();
             puzzle.IsSolved().Should().BeTrue();
@@ -61,14 +61,14 @@ namespace Puzzle.Tests
 
             BEFS solver = new();
             Manhattan heuristic = new();
-            var result = solver.Solve(ref puzzle, heuristic);
+            var result = solver.Solve(ref puzzle, heuristic, out string steps);
 
             result.Should().BeTrue();
             puzzle.IsSolved().Should().BeTrue();
         }
 
         [Fact]
-        public void BFS_ImpossiblePuzzle()
+        public void BEFS_ImpossiblePuzzle()
         {
             IPuzzle puzzle = new Puzzle(2)
             {
@@ -80,10 +80,46 @@ namespace Puzzle.Tests
 
             BEFS solver = new();
             Manhattan heuristic = new();
-            var result = solver.Solve(ref puzzle, heuristic);
+            var result = solver.Solve(ref puzzle, heuristic, out string steps);
 
             result.Should().BeFalse();
             puzzle.IsSolved().Should().BeFalse();
+        }
+
+        [Fact]
+        public void BEFS_StepsPossible()
+        {
+            IPuzzle puzzle = new Puzzle(2)
+            {
+                Board = new int[][] {
+                    new int[2] {  1,  2 },
+                    new int[2] {  0,  3 }
+                }
+            };
+
+            BEFS solver = new();
+            Manhattan heuristic = new();
+            var result = solver.Solve(ref puzzle, heuristic, out string steps);
+
+            steps.Should().Be("DL");
+        }
+
+        [Fact]
+        public void BEFS_StepsImpossible()
+        {
+            IPuzzle puzzle = new Puzzle(2)
+            {
+                Board = new int[][] {
+                    new int[2] {  1,  0 },
+                    new int[2] {  2,  3 }
+                }
+            };
+
+            BEFS solver = new();
+            Manhattan heuristic = new();
+            var result = solver.Solve(ref puzzle, heuristic, out string steps);
+
+            steps.Should().Be(string.Empty);
         }
     }
 }

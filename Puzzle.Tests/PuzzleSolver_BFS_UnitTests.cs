@@ -17,7 +17,7 @@ namespace Puzzle.Tests
             var puzzle = Puzzle.GetSolvedPuzzle(4);
 
             BFS BFSsolver = new();
-            var result = BFSsolver.Solve(ref puzzle);
+            var result = BFSsolver.Solve(ref puzzle, out string steps);
 
             result.Should().BeTrue();
             puzzle.IsSolved().Should().BeTrue();
@@ -37,7 +37,7 @@ namespace Puzzle.Tests
             };
 
             BFS BFSsolver = new();
-            var result = BFSsolver.Solve(ref puzzle);
+            var result = BFSsolver.Solve(ref puzzle, out string steps);
 
             result.Should().BeTrue();
             puzzle.IsSolved().Should().BeTrue();
@@ -56,7 +56,7 @@ namespace Puzzle.Tests
             };
 
             BFS BFSsolver = new();
-            var result = BFSsolver.Solve(ref puzzle);
+            var result = BFSsolver.Solve(ref puzzle, out string steps);
 
             result.Should().BeTrue();
             puzzle.IsSolved().Should().BeTrue();
@@ -74,10 +74,44 @@ namespace Puzzle.Tests
             };
 
             BFS BFSsolver = new();
-            var result = BFSsolver.Solve(ref puzzle);
+            var result = BFSsolver.Solve(ref puzzle, out string steps);
 
             result.Should().BeFalse();
             puzzle.IsSolved().Should().BeFalse();
+        }
+
+        [Fact]
+        public void BFS_StepsPossible()
+        {
+            IPuzzle puzzle = new Puzzle(2)
+            {
+                Board = new int[][] {
+                    new int[2] {  1,  2 },
+                    new int[2] {  0,  3 }
+                }
+            };
+
+            BFS BFSsolver = new();
+            var result = BFSsolver.Solve(ref puzzle, out string steps);
+
+            steps.Should().Be("DLL");
+        }
+
+        [Fact]
+        public void BFS_StepsImpossible()
+        {
+            IPuzzle puzzle = new Puzzle(2)
+            {
+                Board = new int[][] {
+                    new int[2] {  1,  0 },
+                    new int[2] {  2,  3 }
+                }
+            };
+
+            BFS BFSsolver = new();
+            var result = BFSsolver.Solve(ref puzzle, out string steps);
+
+            steps.Should().Be(string.Empty);
         }
     }
 }

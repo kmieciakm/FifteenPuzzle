@@ -16,17 +16,23 @@ namespace Puzzle.Solver
         /// </summary>
         /// <param name="puzzle">Puzzle to solve.</param>
         /// <returns>True if found solved puzzle otherwise, false.</returns>
-        public bool Solve(ref IPuzzle puzzle)
+        public bool Solve(ref IPuzzle puzzle, out string steps)
         {
             HashSet<IPuzzle> visited = new();
             Queue<IPuzzle> toVisit = new();
+            StringBuilder stepsBuilder = new();
 
             toVisit.Enqueue(puzzle);
             while (toVisit.Count > 0)
             {
                 puzzle = toVisit.Dequeue();
                 visited.Add(puzzle);
-                //Console.WriteLine($"Visited {visited.Count} nodes");
+
+                if (puzzle.IsSolved())
+                {
+                    steps = stepsBuilder.ToString();
+                    return true;
+                }
 
                 var possibleMoves = puzzle.GetPossibleMoves();
                 IPuzzle nextPuzzle;
@@ -36,16 +42,13 @@ namespace Puzzle.Solver
                     nextPuzzle.TryMakeMove(move);
                     if (!visited.Contains(nextPuzzle, Comparer))
                     {
+                        stepsBuilder.Append(move.ToString());
                         toVisit.Enqueue(nextPuzzle);
                     }
                 }
-
-                if (puzzle.IsSolved())
-                {
-                    return true;
-                }
             }
 
+            steps = string.Empty;
             return false;
         }
     }

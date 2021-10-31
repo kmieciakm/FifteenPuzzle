@@ -18,5 +18,17 @@ namespace Puzzle
         public int X { get; set; }
         public int Y { get; set; }
         public Direction Direction { get; set; }
+
+        public override string ToString()
+        {
+            return Direction switch
+            {
+                Direction.UP => "U",
+                Direction.DOWN => "D",
+                Direction.LEFT => "L",
+                Direction.RIGHT => "R",
+                _ => string.Empty
+            };
+        }
     }
 }

@@ -13,12 +13,13 @@ namespace Puzzle.Solver
     {
         private PuzzleComparer Comparer { get; set; } = new PuzzleComparer();
 
-        public bool Solve(ref IPuzzle puzzle, IHeuristic heuristic)
+        public bool Solve(ref IPuzzle puzzle, IHeuristic heuristic, out string steps)
         {
             var visited = new HashSet<IPuzzle>();
             var desiredPuzzle = Puzzle.GetSolvedPuzzle(puzzle.BoardSize);
-            int maxQueueSize = Helpers.Math.Factorial(puzzle.BoardSize * puzzle.BoardSize);
+            var maxQueueSize = Helpers.Math.Factorial(puzzle.BoardSize * puzzle.BoardSize);
             var toVisitPriority = new FastPriorityQueue<PuzzleNode>(maxQueueSize);
+            var stepsBuilder = new StringBuilder();
 
             var cost = heuristic.Calculate(puzzle, desiredPuzzle);
             toVisitPriority.Enqueue(new PuzzleNode(puzzle), cost);
@@ -27,7 +28,12 @@ namespace Puzzle.Solver
             {
                 puzzle = toVisitPriority.Dequeue().Puzzle;
                 visited.Add(puzzle);
-                //Console.WriteLine($"Visited {visited.Count} nodes");
+
+                if (puzzle.IsSolved())
+                {
+                    steps = stepsBuilder.ToString();
+                    return true;
+                }
 
                 var possibleMoves = puzzle.GetPossibleMoves();
                 IPuzzle nextPuzzle;
@@ -39,15 +45,12 @@ namespace Puzzle.Solver
                     {
                         cost = heuristic.Calculate(nextPuzzle, desiredPuzzle);
                         toVisitPriority.Enqueue(new PuzzleNode(nextPuzzle), cost);
+                        stepsBuilder.Append(move.ToString());
                     }
-                }
-
-                if (puzzle.IsSolved())
-                {
-                    return true;
                 }
             }
 
+            steps = string.Empty;
             return false;
         }
     }

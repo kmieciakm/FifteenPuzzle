@@ -17,7 +17,7 @@ namespace Puzzle.Tests
             var puzzle = Puzzle.GetSolvedPuzzle(4);
 
             DFS DFSsolver = new();
-            var result = DFSsolver.Solve(ref puzzle);
+            var result = DFSsolver.Solve(ref puzzle, out string steps);
 
             result.Should().BeTrue();
             puzzle.IsSolved().Should().BeTrue();
@@ -35,7 +35,7 @@ namespace Puzzle.Tests
             };
 
             DFS DFSsolver = new();
-            var result = DFSsolver.Solve(ref puzzle);
+            var result = DFSsolver.Solve(ref puzzle, out string steps);
 
             result.Should().BeTrue();
             puzzle.IsSolved().Should().BeTrue();
@@ -54,7 +54,7 @@ namespace Puzzle.Tests
             };
 
             DFS DFSsolver = new();
-            var result = DFSsolver.Solve(ref puzzle);
+            var result = DFSsolver.Solve(ref puzzle, out string steps);
 
             result.Should().BeTrue();
             puzzle.IsSolved().Should().BeTrue();
@@ -72,10 +72,44 @@ namespace Puzzle.Tests
             };
 
             DFS DFSsolver = new();
-            var result = DFSsolver.Solve(ref puzzle);
+            var result = DFSsolver.Solve(ref puzzle, out string steps);
 
             result.Should().BeFalse();
             puzzle.IsSolved().Should().BeFalse();
+        }
+
+        [Fact]
+        public void DFS_StepsPossible()
+        {
+            IPuzzle puzzle = new Puzzle(2)
+            {
+                Board = new int[][] {
+                    new int[2] {  1,  2 },
+                    new int[2] {  0,  3 }
+                }
+            };
+
+            DFS solver = new();
+            var result = solver.Solve(ref puzzle, out string steps);
+
+            steps.Should().Be("DLURDLURDLU");
+        }
+
+        [Fact]
+        public void DFS_StepsImpossible()
+        {
+            IPuzzle puzzle = new Puzzle(2)
+            {
+                Board = new int[][] {
+                    new int[2] {  1,  0 },
+                    new int[2] {  2,  3 }
+                }
+            };
+
+            DFS solver = new();
+            var result = solver.Solve(ref puzzle, out string steps);
+
+            steps.Should().Be(string.Empty);
         }
     }
 }

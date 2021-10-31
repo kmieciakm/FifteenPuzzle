@@ -11,19 +11,23 @@ namespace Puzzle.Solver
     {
         private Stack<IPuzzle> Visited { get; set; } = new Stack<IPuzzle>();
         private PuzzleComparer Comparer { get; set; } = new PuzzleComparer();
+        private StringBuilder StepsBuilder { get; set; } = new StringBuilder();
 
         /// <summary>
         /// The algorithm makes the first move and explores the resulting puzzle as far as possible before backtracking.
         /// </summary>
         /// <param name="puzzle">Puzzle to solve.</param>
+        /// <param name="puzzle">Solution steps.</param>
         /// <returns>True if found solved puzzle otherwise, false.</returns>
-        public bool Solve(ref IPuzzle puzzle)
+        public bool Solve(ref IPuzzle puzzle, out string steps)
         {
             Visited.Push(puzzle);
-            //Console.WriteLine($"Visited {Visited.Count} nodes");
 
             if (puzzle.IsSolved())
+            {
+                steps = StepsBuilder.ToString();
                 return true;
+            }
 
             var possibleMoves = puzzle.GetPossibleMoves();
             IPuzzle nextPuzzle;
@@ -33,7 +37,8 @@ namespace Puzzle.Solver
                 nextPuzzle.TryMakeMove(move);
                 if (!Visited.Contains(nextPuzzle, Comparer))
                 {
-                    if (Solve(ref nextPuzzle))
+                    StepsBuilder.Append(move.ToString());
+                    if (Solve(ref nextPuzzle, out steps))
                     {
                         puzzle = nextPuzzle;
                         return true;
@@ -41,6 +46,7 @@ namespace Puzzle.Solver
                 }
             }
 
+            steps = string.Empty;
             return false;
         }
     }
