@@ -8,6 +8,7 @@ namespace Puzzle
     {
         int[][] Board { get; init; }
         int BoardSize { get; }
+        List<Direction> MovesOrder { get; set; }
 
         void GenerateBoard();
         bool IsSolved();
@@ -24,6 +25,13 @@ namespace Puzzle
 
         public int[][] Board { get; init; }
         public int BoardSize { get; }
+        public List<Direction> MovesOrder { get; set; } = new List<Direction>()
+            {
+                Direction.UP,
+                Direction.DOWN,
+                Direction.RIGHT,
+                Direction.LEFT
+            };
 
         public Puzzle(int boardSize)
         {
@@ -33,6 +41,12 @@ namespace Puzzle
             {
                 Board[rowIndex] = new int[BoardSize];
             }
+        }
+
+        public Puzzle(int boardSize, List<Direction> movesOrder)
+            : this(boardSize)
+        {
+            MovesOrder = movesOrder;
         }
 
         public void GenerateBoard()
@@ -77,16 +91,16 @@ namespace Puzzle
 
             return move.Direction switch
             {
-                Direction.DOWN =>  IsValidField(move.X + 1, move.Y) && IsEmptyField(move.X + 1, move.Y),
-                Direction.UP =>    IsValidField(move.X - 1, move.Y) && IsEmptyField(move.X - 1, move.Y),
-                Direction.LEFT =>  IsValidField(move.X, move.Y - 1) && IsEmptyField(move.X, move.Y - 1),
+                Direction.DOWN => IsValidField(move.X + 1, move.Y) && IsEmptyField(move.X + 1, move.Y),
+                Direction.UP => IsValidField(move.X - 1, move.Y) && IsEmptyField(move.X - 1, move.Y),
+                Direction.LEFT => IsValidField(move.X, move.Y - 1) && IsEmptyField(move.X, move.Y - 1),
                 Direction.RIGHT => IsValidField(move.X, move.Y + 1) && IsEmptyField(move.X, move.Y + 1),
                 _ => false
             };
 
             bool IsValidField(int x, int y)
             {
-                return 
+                return
                     x >= 0 &&
                     x < Board.Length &&
                     y >= 0 &&
@@ -104,9 +118,9 @@ namespace Puzzle
             {
                 switch (move.Direction)
                 {
-                    case Direction.DOWN:  Swap(move.X, move.Y, move.X + 1, move.Y); break;
-                    case Direction.UP:    Swap(move.X, move.Y, move.X - 1, move.Y); break;
-                    case Direction.LEFT:  Swap(move.X, move.Y, move.X, move.Y - 1); break;
+                    case Direction.DOWN: Swap(move.X, move.Y, move.X + 1, move.Y); break;
+                    case Direction.UP: Swap(move.X, move.Y, move.X - 1, move.Y); break;
+                    case Direction.LEFT: Swap(move.X, move.Y, move.X, move.Y - 1); break;
                     case Direction.RIGHT: Swap(move.X, move.Y, move.X, move.Y + 1); break;
                 };
             }
@@ -115,14 +129,25 @@ namespace Puzzle
         public IEnumerable<Move> GetPossibleMoves()
         {
             var (x, y) = GetField(EmptyField);
-            var moves = new List<Move>()
-            {
-                new Move(x + 1, y, Direction.UP),
-                new Move(x - 1, y, Direction.DOWN),
-                new Move(x, y - 1, Direction.RIGHT),
-                new Move(x, y + 1, Direction.LEFT)
-            };
+            var moves = GetAllMovesOrdered(x, y);
             return moves.Where(move => CanMakeMove(move));
+        }
+
+        private List<Move> GetAllMovesOrdered(int x, int y)
+        {
+            var moves = new List<Move>();
+            foreach (var direction in MovesOrder)
+            {
+                moves.Add(direction switch
+                {
+                    Direction.UP => new Move(x + 1, y, Direction.UP),
+                    Direction.DOWN => new Move(x - 1, y, Direction.DOWN),
+                    Direction.LEFT => new Move(x, y + 1, Direction.LEFT),
+                    Direction.RIGHT => new Move(x, y - 1, Direction.RIGHT),
+                    _ => throw new NotSupportedException($"Direction {direction} not supported."),
+                });
+            };
+            return moves;
         }
 
         public (int x, int y) GetField(int value)
@@ -204,7 +229,7 @@ namespace Puzzle
                     board[rowIndex][columnIndex] = Board[rowIndex][columnIndex];
                 }
             }
-            return new Puzzle(BoardSize) { Board = board };
+            return new Puzzle(BoardSize, MovesOrder) { Board = board };
         }
     }
 }

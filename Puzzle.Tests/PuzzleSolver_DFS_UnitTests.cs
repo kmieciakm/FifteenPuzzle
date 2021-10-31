@@ -111,5 +111,29 @@ namespace Puzzle.Tests
 
             steps.Should().Be(string.Empty);
         }
+
+        [Fact]
+        public void DFS_Order()
+        {
+            IPuzzle puzzle = new Puzzle(2)
+            {
+                Board = new int[][] {
+                    new int[2] {  1,  2 },
+                    new int[2] {  0,  3 }
+                }
+            };
+            puzzle.MovesOrder = new List<Direction>()
+            {
+                Direction.LEFT,
+                Direction.RIGHT,
+                Direction.UP,
+                Direction.DOWN
+            };
+
+            DFS solver = new();
+            var result = solver.Solve(ref puzzle, out string steps);
+
+            steps.Should().Be("L");
+        }
     }
 }

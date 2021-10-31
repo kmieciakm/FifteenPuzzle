@@ -4,7 +4,6 @@ using CommandLine;
 using System.Collections.Generic;
 using System.Linq;
 using Puzzle.Solver;
-using Puzzle.Heuristics;
 using System.Text;
 
 namespace Puzzle.Game
@@ -26,18 +25,20 @@ namespace Puzzle.Game
 
             static string Solve(PuzzleOptions option)
             {
-                IPuzzle puzzle = ParsePuzzle(option.Board);
+                IPuzzle puzzle = option.ParsePuzzle();
                 bool isSolved = false;
                 string steps = "";
 
                 if (option.UseBFS())
                 {
                     var solver = new BFS();
+                    puzzle.MovesOrder = option.GetMovesOrder();
                     isSolved = solver.Solve(ref puzzle, out steps);
                 }
                 else if (option.UseDFS())
                 {
                     var solver = new DFS();
+                    puzzle.MovesOrder = option.GetMovesOrder();
                     isSolved = solver.Solve(ref puzzle, out steps);
                 }
                 else if (option.UseBEFS())
@@ -58,26 +59,6 @@ namespace Puzzle.Game
             Console.WriteLine(error.Message);
             Console.ResetColor();
             Console.WriteLine("Use --help for more details.");
-        }
-
-        private static IPuzzle ParsePuzzle(string board)
-        {
-            var boardCharacters = board
-                .ToCharArray()
-                .Select(s => s.ToString())
-                .Select(character => int.Parse(character));
-
-            var boardSize = (int)Math.Sqrt(boardCharacters.Count());
-
-            Puzzle puzzle = new(boardSize);
-            for (int x = 0; x < boardSize; x++)
-            {
-                for (int y = 0; y < boardSize; y++)
-                {
-                    puzzle.Board[x][y] = boardCharacters.ElementAt((boardSize * x) + y);
-                }
-            }
-            return puzzle;
         }
 
         private static string BuildOutput(bool isSolved, string steps)
